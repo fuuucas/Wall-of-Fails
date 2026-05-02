@@ -3,7 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wall of Fails</title>
+    <title>Wall of Fails - The Public Atlas of Bad Trades</title>
+    <meta
+      name="description"
+      content="Wall of Fails is a public atlas of bad trades where X users pin their worst PnL, screenshots, and hard-earned market lessons."
+    />
+    <meta name="theme-color" content="#0b0c0e" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Wall of Fails - The Public Atlas of Bad Trades" />
+    <meta
+      property="og:description"
+      content="Post your worst trade, immortalize the red candle, and explore the Hall of Shame."
+    />
+    <meta property="og:image" content="Wall%20of%20Fails%20logo.png" />
+    <meta property="og:site_name" content="Wall of Fails" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wall of Fails - The Public Atlas of Bad Trades" />
+    <meta
+      name="twitter:description"
+      content="A public wall for bad trades, brutal PnL, and lessons learned the expensive way."
+    />
+    <meta name="twitter:image" content="Wall%20of%20Fails%20logo.png" />
     <link rel="icon" type="image/png" href="Wall%20of%20Fails%20logo.png" />
     <link rel="apple-touch-icon" href="Wall%20of%20Fails%20logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -46,6 +66,7 @@
       </header>
 
       <aside class="utility-bar" aria-label="Map tools">
+        <button class="hall-button" type="button" id="hallButton">Hall of Shame</button>
         <button class="icon-button" type="button" id="infoButton" aria-label="Info">
           i
         </button>
@@ -137,7 +158,50 @@
             </p>
           </div>
 
+          <section class="tip-box" aria-label="Tip fucas">
+            <div>
+              <p>Tip jar</p>
+              <h3>Buy fucas a green candle</h3>
+            </div>
+
+            <label>
+              <span>Solana</span>
+              <button
+                class="wallet-pill"
+                type="button"
+                data-wallet="2quTkGTNLKN2xFa7a1tYg7vjuzKJ1Ev4fYUejYn3JEgo"
+              >
+                2quTkGTNLKN2xFa7a1tYg7vjuzKJ1Ev4fYUejYn3JEgo
+              </button>
+            </label>
+
+            <label>
+              <span>EVM</span>
+              <button
+                class="wallet-pill"
+                type="button"
+                data-wallet="0x4c5b680775e50Dd1aD77d1644E7a6e4D91019623"
+              >
+                0x4c5b680775e50Dd1aD77d1644E7a6e4D91019623
+              </button>
+            </label>
+          </section>
+
           <button class="submit-button" type="button" id="infoPostButton">Post a fail</button>
+        </div>
+      </dialog>
+
+      <dialog class="modal hall-modal" id="hallDialog">
+        <div class="hall-panel">
+          <div class="panel-head">
+            <div>
+              <p>Leaderboard</p>
+              <h2>Hall of Shame</h2>
+            </div>
+            <button class="ghost-button" type="button" id="closeHallDialog" aria-label="Close">x</button>
+          </div>
+
+          <div class="hall-list" id="hallList" aria-label="Worst PnL ranking"></div>
         </div>
       </dialog>
     </main>
