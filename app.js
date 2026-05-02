@@ -16,6 +16,10 @@ const goToFailButton = document.getElementById("goToFailButton");
 const searchInput = document.getElementById("searchInput");
 const homeButton = document.getElementById("homeButton");
 const mapHint = document.getElementById("mapHint");
+const hallButton = document.getElementById("hallButton");
+const hallDialog = document.getElementById("hallDialog");
+const closeHallDialog = document.getElementById("closeHallDialog");
+const hallList = document.getElementById("hallList");
 const infoButton = document.getElementById("infoButton");
 const infoDialog = document.getElementById("infoDialog");
 const closeInfoDialog = document.getElementById("closeInfoDialog");
@@ -172,10 +176,13 @@ function renderFails(list = fails) {
   failLayer.innerHTML = "";
 
   list.forEach((fail) => {
-    const pin = document.createElement("button");
-    pin.className = `fail-pin${state.activeId === fail.id ? " active" : ""}`;
-    pin.type = "button";
+    const pin = document.createElement("article");
+    pin.classList.add("fail-pin");
+    if (state.activeId === fail.id) pin.classList.add("active");
     pin.id = fail.id;
+    pin.tabIndex = 0;
+    pin.setAttribute("role", "button");
+    pin.setAttribute("aria-label", `Open fail from @${fail.handle}`);
     pin.style.left = `${fail.x}px`;
     pin.style.top = `${fail.y}px`;
 
@@ -196,10 +203,27 @@ function renderFails(list = fails) {
     story.className = "fail-story";
     story.textContent = fail.story;
 
-    pin.append(handle, pnl, image, story);
+    const shareButton = document.createElement("button");
+    shareButton.className = "share-fail-button";
+    shareButton.type = "button";
+    shareButton.textContent = "Share fail";
+    shareButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      shareFail(fail);
+    });
+
+    pin.append(handle, pnl, image, story, shareButton);
     pin.addEventListener("click", (event) => {
       event.stopPropagation();
       state.activeId = state.activeId === fail.id ? null : fail.id;
+      updateFailUrl(state.activeId);
+      renderFails(getFilteredFails());
+    });
+    pin.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      state.activeId = state.activeId === fail.id ? null : fail.id;
+      updateFailUrl(state.activeId);
       renderFails(getFilteredFails());
     });
     failLayer.appendChild(pin);
@@ -219,6 +243,112 @@ function updateInfoStats() {
   totalFailsStat.textContent = String(fails.length);
   totalLossStat.textContent = formatPnl(-totalLoss);
   biggestFailStat.textContent = formatPnl(-biggestFail);
+}
+
+function getSortedFailsByPain() {
+  return [...fails].sort((a, b) => a.pnl - b.pnl);
+}
+
+function getFailUrl(id) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("fail", id);
+  return url.toString();
+}
+
+function updateFailUrl(id) {
+  const url = new URL(window.location.href);
+  if (id) {
+    url.searchParams.set("fail", id);
+  } else {
+    url.searchParams.delete("fail");
+  }
+  window.history.replaceState({}, "", url);
+}
+
+function renderHallOfShame() {
+  hallList.innerHTML = "";
+
+  getSortedFailsByPain().forEach((fail, index) => {
+    const item = document.createElement("button");
+    item.className = "hall-item";
+    item.type = "button";
+
+    const rank = document.createElement("span");
+    rank.className = "hall-rank";
+    rank.textContent = `#${index + 1}`;
+
+    const details = document.createElement("span");
+    details.className = "hall-details";
+
+    const handle = document.createElement("strong");
+    handle.textContent = `@${fail.handle}`;
+
+    const story = document.createElement("small");
+    story.textContent = fail.story;
+
+    details.append(handle, story);
+
+    const pnl = document.createElement("span");
+    pnl.className = "hall-pnl";
+    pnl.textContent = formatPnl(fail.pnl);
+
+    item.append(rank, details, pnl);
+    item.addEventListener("click", () => {
+      hallDialog.close();
+      goToFail(fail.id);
+    });
+    hallList.appendChild(item);
+  });
+}
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const input = document.createElement("textarea");
+  input.value = text;
+  input.setAttribute("readonly", "");
+  input.style.position = "fixed";
+  input.style.opacity = "0";
+  document.body.appendChild(input);
+  input.select();
+  document.execCommand("copy");
+  input.remove();
+}
+
+async function shareFail(fail) {
+  const url = getFailUrl(fail.id);
+  const shareData = {
+    title: `@${fail.handle} made the Hall of Shame`,
+    text: `@${fail.handle} posted a ${formatPnl(fail.pnl)} fail on Wall of Fails.`,
+    url,
+  };
+
+  try {
+    await copyText(url);
+    setMapHint("Fail URL copied to the clipboard.");
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (_error) {
+        // If native share is cancelled or unavailable, still keep the clipboard copy.
+      }
+    }
+  } catch (_error) {
+    setMapHint("Could not copy fail URL.");
+  }
+}
+
+async function copyWalletAddress(address) {
+  try {
+    await copyText(address);
+    setMapHint("Wallet address copied.");
+  } catch (_error) {
+    setMapHint("Could not copy wallet address.");
+  }
 }
 
 function applyTransform() {
@@ -263,6 +393,14 @@ function goToFail(id) {
   searchInput.value = "";
   renderFails();
   centerOn(fail.x + 170, fail.y + 160);
+  updateFailUrl(fail.id);
+}
+
+function openFailFromUrl() {
+  const failId = new URLSearchParams(window.location.search).get("fail");
+  if (failId && fails.some((fail) => fail.id === failId)) {
+    goToFail(failId);
+  }
 }
 
 function initPosition() {
@@ -312,6 +450,7 @@ async function loadFailsFromSupabase() {
   fails = data.length ? data.map(normalizeFail) : [];
   renderFails(getFilteredFails());
   updateInfoStats();
+  openFailFromUrl();
 }
 
 async function uploadFailImage(file) {
@@ -377,7 +516,7 @@ async function initSupabaseAuth() {
 
 viewport.addEventListener("pointerdown", (event) => {
   if (event.pointerType === "mouse" && event.button !== 0) return;
-  if (event.target.closest("button, input, textarea, label")) return;
+  if (event.target.closest("button, input, textarea, label, .fail-pin")) return;
   event.preventDefault();
   state.dragging = true;
   state.dragPointerId = event.pointerId;
@@ -436,6 +575,7 @@ viewport.addEventListener("click", () => {
 
   if (state.activeId) {
     state.activeId = null;
+    updateFailUrl(null);
     renderFails(getFilteredFails());
   }
 });
@@ -514,6 +654,7 @@ postForm.addEventListener("submit", async (event) => {
     postDialog.close();
     renderFails();
     updateInfoStats();
+    updateFailUrl(savedFail.id);
     successDialog.showModal();
   } catch (error) {
     formError.textContent = "Could not post fail. Check Supabase table/storage settings.";
@@ -527,6 +668,7 @@ goToFailButton.addEventListener("click", () => {
 
 searchInput.addEventListener("input", () => {
   state.activeId = null;
+  updateFailUrl(null);
   renderFails(getFilteredFails());
 });
 
@@ -541,6 +683,16 @@ homeButton.addEventListener("click", () => {
   searchInput.value = "";
   renderFails();
   initPosition();
+  updateFailUrl(null);
+});
+
+hallButton.addEventListener("click", () => {
+  renderHallOfShame();
+  hallDialog.showModal();
+});
+
+closeHallDialog.addEventListener("click", () => {
+  hallDialog.close();
 });
 
 infoButton.addEventListener("click", () => {
@@ -565,6 +717,10 @@ infoPostButton.addEventListener("click", () => {
   postDialog.showModal();
 });
 
+document.querySelectorAll("[data-wallet]").forEach((button) => {
+  button.addEventListener("click", () => copyWalletAddress(button.dataset.wallet));
+});
+
 window.addEventListener("resize", applyTransform);
 
 renderFails();
@@ -572,3 +728,4 @@ updateInfoStats();
 initPosition();
 initSupabaseAuth();
 loadFailsFromSupabase();
+openFailFromUrl();

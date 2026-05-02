@@ -102,6 +102,7 @@ button {
   text-align: left;
   transition: width 180ms ease, min-height 180ms ease, transform 180ms ease, border-color 180ms ease;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .fail-pin:hover,
@@ -113,7 +114,7 @@ button {
 
 .fail-pin.active {
   width: 360px;
-  min-height: 430px;
+  min-height: 484px;
   background: rgba(14, 15, 17, 0.97);
 }
 
@@ -161,6 +162,22 @@ button {
   line-height: 1.5;
 }
 
+.share-fail-button {
+  display: none;
+  width: 100%;
+  height: 40px;
+  margin-top: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(244, 201, 107, 0.14);
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.fail-pin.active .share-fail-button {
+  display: block;
+}
+
 .topbar,
 .utility-bar,
 .map-hint {
@@ -188,6 +205,7 @@ button {
 
 .brand-chip,
 .control-button,
+.hall-button,
 .icon-button,
 .search-field,
 .ghost-button,
@@ -200,7 +218,8 @@ button {
 }
 
 .brand-chip,
-.control-button {
+.control-button,
+.hall-button {
   height: 46px;
   display: inline-flex;
   align-items: center;
@@ -208,6 +227,13 @@ button {
   border-radius: 8px;
   padding: 0 15px;
   font-weight: 800;
+}
+
+.hall-button {
+  background:
+    linear-gradient(135deg, rgba(255, 77, 93, 0.3), transparent),
+    var(--panel);
+  color: #fff;
 }
 
 .brand-chip {
@@ -325,7 +351,8 @@ button {
 
 .post-panel,
 .success-panel,
-.info-panel {
+.info-panel,
+.hall-panel {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel-strong);
@@ -333,7 +360,8 @@ button {
 }
 
 .post-panel,
-.info-panel {
+.info-panel,
+.hall-panel {
   display: grid;
   gap: 16px;
   padding: 22px;
@@ -484,9 +512,134 @@ button {
   color: #fff;
 }
 
+.tip-box {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(244, 201, 107, 0.22);
+  border-radius: 8px;
+  background: rgba(244, 201, 107, 0.075);
+}
+
+.tip-box p,
+.tip-box h3 {
+  margin: 0;
+}
+
+.tip-box p {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tip-box h3 {
+  color: #fff;
+  font-size: 18px;
+}
+
+.tip-box label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.wallet-pill {
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  color: #d8d7d2;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wallet-pill:hover {
+  color: #fff;
+  border-color: rgba(244, 201, 107, 0.5);
+}
+
 .info-panel .submit-button:disabled {
   opacity: 0.52;
   cursor: not-allowed;
+}
+
+.hall-panel {
+  max-height: min(680px, calc(100vh - 48px));
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 77, 93, 0.22), transparent 34%),
+    var(--panel-strong);
+}
+
+.hall-list {
+  display: grid;
+  gap: 10px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.hall-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--text);
+  text-align: left;
+}
+
+.hall-item:hover {
+  border-color: rgba(255, 77, 93, 0.55);
+  background: rgba(255, 77, 93, 0.1);
+}
+
+.hall-rank {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 77, 93, 0.16);
+  color: var(--red);
+  font-weight: 800;
+}
+
+.hall-details {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hall-details strong {
+  color: #fff;
+}
+
+.hall-details small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hall-pnl {
+  color: var(--red);
+  font-size: 18px;
+  font-weight: 800;
 }
 
 @media (max-width: 700px) {
@@ -505,6 +658,7 @@ button {
   }
 
   .action-stack > *,
+  .hall-button,
   .search-field {
     flex: 1;
   }
@@ -520,5 +674,14 @@ button {
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hall-item {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .hall-pnl {
+    grid-column: 2;
+    font-size: 16px;
   }
 }
