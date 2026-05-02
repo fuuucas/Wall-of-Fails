@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wall of Fails</title>
+    <link rel="icon" type="image/png" href="Wall%20of%20Fails%20logo.png" />
+    <link rel="apple-touch-icon" href="Wall%20of%20Fails%20logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Wall of Fails map">
+      <section class="map-viewport" id="mapViewport">
+        <div class="world" id="world">
+          <div class="world-grid"></div>
+          <div class="fail-layer" id="failLayer"></div>
+        </div>
+      </section>
+
+      <header class="topbar" aria-label="Account actions">
+        <button class="brand-chip" type="button" id="homeButton" aria-label="Go to map center">
+          <img
+            class="brand-mark"
+            src="wall%20of%20fails%20logo%201.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <span>Wall of Fails</span>
+        </button>
+        <div class="action-stack">
+          <button class="control-button" type="button" id="connectButton">
+            <span class="x-icon">X</span>
+            <span id="connectLabel">Connect X</span>
+          </button>
+          <button class="control-button primary" type="button" id="postButton" disabled>
+            <span>+</span>
+            <span>Post Fail</span>
+          </button>
+        </div>
+      </header>
+
+      <aside class="utility-bar" aria-label="Map tools">
+        <button class="icon-button" type="button" id="infoButton" aria-label="Info">
+          i
+        </button>
+        <label class="search-field">
+          <span>@</span>
+          <input id="searchInput" type="search" placeholder="search handle" autocomplete="off" />
+        </label>
+      </aside>
+
+      <div class="map-hint" id="mapHint">Drag to explore. Scroll to zoom.</div>
+
+      <dialog class="modal" id="postDialog">
+        <form class="post-panel" method="dialog" id="postForm">
+          <div class="panel-head">
+            <div>
+              <p>Post a fail</p>
+              <h2>Immortalize the red candle</h2>
+            </div>
+            <button class="ghost-button" type="button" id="closeDialog" aria-label="Close">x</button>
+          </div>
+
+          <label class="field">
+            <span>Negative PnL</span>
+            <input id="pnlInput" type="number" max="-1" step="1" placeholder="-4200" required />
+          </label>
+
+          <label class="field">
+            <span>Screenshot</span>
+            <input id="imageInput" type="file" accept="image/*" />
+          </label>
+
+          <label class="field">
+            <span>Explanation</span>
+            <textarea
+              id="explanationInput"
+              rows="5"
+              placeholder="What happened?"
+              maxlength="340"
+              required
+            ></textarea>
+          </label>
+
+          <p class="form-error" id="formError" role="alert"></p>
+
+          <button class="submit-button" type="submit">Post fail</button>
+        </form>
+      </dialog>
+
+      <dialog class="modal success-modal" id="successDialog">
+        <div class="success-panel">
+          <p>New fail posted!</p>
+          <button class="submit-button" type="button" id="goToFailButton">Take me there</button>
+        </div>
+      </dialog>
+
+      <dialog class="modal info-modal" id="infoDialog">
+        <div class="info-panel">
+          <div class="panel-head">
+            <div>
+              <p>Creator</p>
+              <h2>Made by fucas</h2>
+            </div>
+            <button class="ghost-button" type="button" id="closeInfoDialog" aria-label="Close">x</button>
+          </div>
+
+          <div class="stats-grid" aria-label="Wall stats">
+            <article>
+              <span id="totalFailsStat">0</span>
+              <p>fails pinned</p>
+            </article>
+            <article>
+              <span id="totalLossStat">$0</span>
+              <p>total pain</p>
+            </article>
+            <article>
+              <span id="biggestFailStat">$0</span>
+              <p>biggest red candle</p>
+            </article>
+          </div>
+
+          <div class="info-copy">
+            <p>
+              Wall of Fails is built by fucas, also known as
+              <a href="https://x.com/fuuucas" target="_blank" rel="noreferrer">@fuuucas</a> on X.
+            </p>
+            <p>
+              Connect X, post a negative PnL, add the lore, and your fail gets pinned forever on
+              the map.
+            </p>
+          </div>
+
+          <button class="submit-button" type="button" id="infoPostButton">Post a fail</button>
+        </div>
+      </dialog>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
