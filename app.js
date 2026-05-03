@@ -15,6 +15,7 @@ const successDialog = document.getElementById("successDialog");
 const goToFailButton = document.getElementById("goToFailButton");
 const searchInput = document.getElementById("searchInput");
 const homeButton = document.getElementById("homeButton");
+const logoutButton = document.getElementById("logoutButton");
 const mapHint = document.getElementById("mapHint");
 const hallButton = document.getElementById("hallButton");
 const hallDialog = document.getElementById("hallDialog");
@@ -169,6 +170,7 @@ function setConnectedUser(user) {
   state.handle = user ? handleFromUser(user) : "";
   connectLabel.textContent = user ? `@${state.handle}` : "Connect X";
   postButton.disabled = !user;
+  logoutButton.disabled = !user;
   connectButton.disabled = false;
 }
 
@@ -605,6 +607,21 @@ connectButton.addEventListener("click", async () => {
     connectButton.disabled = false;
     setMapHint("X login failed. Check Supabase provider settings.");
   }
+});
+
+logoutButton.addEventListener("click", async () => {
+  if (!state.connected) return;
+
+  if (supabaseClient) {
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      setMapHint("No se pudo cerrar sesión.");
+      return;
+    }
+  }
+
+  setConnectedUser(null);
+  setMapHint("Sesión cerrada. Ahora puedes cambiar de cuenta.");
 });
 
 postButton.addEventListener("click", () => {

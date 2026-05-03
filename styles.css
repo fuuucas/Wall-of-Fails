@@ -668,8 +668,48 @@ button {
     right: 18px;
   }
 
+  .fail-pin {
+    width: min(280px, calc(100vw - 32px));
+    min-height: 76px;
+  }
+
   .fail-pin.active {
-    width: 310px;
+    width: min(90vw, 320px);
+  }
+
+  .fail-pin.active .fail-image {
+    height: 160px;
+  }
+
+  .post-panel,
+  .info-panel,
+  .hall-panel {
+    padding: 18px;
+  }
+
+  .search-field {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .search-field input {
+    font-size: 14px;
+  }
+
+  .utility-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .action-stack > *,
+  .hall-button,
+  .search-field,
+  .icon-button {
+    min-width: 0;
+  }
+
+  .hall-list {
+    padding-right: 0;
   }
 
   .stats-grid {
